@@ -521,16 +521,17 @@ startBtn.onclick = () => {
   loadQuestion();
 };
 function loadQuestion() {
-  const chapterQuestions = chapters[selectedChapter];
+  const chapterQuestions = chapters[currentChapter];
 
-  if (currentQuestion >= chapterQuestions.length) {
+  if (questionIndex >= chapterQuestions.length) {
     showFinal();
     return;
   }
 
-  const q = chapterQuestions[currentQuestion];
+  const q = chapterQuestions[questionIndex];
+  chapterTitle.textContent = currentChapter;
 
-  quizContainer.innerHTML = `
+  container.innerHTML = `
     <div class="question-card">
       <p>${q.question}</p>
 
@@ -558,6 +559,7 @@ function checkAnswer(i) {
   questionIndex++;
   loadQuestion();
 }
+
 function showFinal() {
   quizWrapper.style.display = "none";
   finalScreen.style.display = "block";
