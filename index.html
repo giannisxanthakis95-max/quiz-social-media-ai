@@ -520,27 +520,25 @@ startBtn.onclick = () => {
 
   loadQuestion();
 };
-
 function loadQuestion() {
-  const chapterQuestions = chapters[currentChapter];
+  const chapterQuestions = chapters[selectedChapter];
 
-  if (questionIndex >= chapterQuestions.length) {
+  if (currentQuestion >= chapterQuestions.length) {
     showFinal();
     return;
   }
 
-  const q = chapterQuestions[questionIndex];
-  chapterTitle.textContent = currentChapter;
+  const q = chapterQuestions[currentQuestion];
 
-  container.innerHTML = `
+  quizContainer.innerHTML = `
     <div class="question-card">
       <p>${q.question}</p>
 
       <div class="answers">
         ${q.answers
           .map(
-            (a, i) => `
-          <button class="answer-btn" onclick="checkAnswer(${i})">${a.text}</button>
+            (ans, i) => `
+          <button class="answer-btn" onclick="checkAnswer(${i})">${ans.text}</button>
         `
           )
           .join("")}
@@ -548,38 +546,18 @@ function loadQuestion() {
     </div>
   `;
 }
+
 function checkAnswer(i) {
   const chapterQuestions = chapters[currentChapter];
   const q = chapterQuestions[questionIndex];
-  const answers = document.querySelectorAll('.answer');
-  const selected = q.answers[i];
 
-  // 🔒 Κλείδωμα: μόλις πατήσει μία φορά, δεν ξαναπατάει τίποτα
-  answers.forEach(btn => {
-    btn.style.pointerEvents = "none";
-  });
-
-  if (selected.correct) {
-    answers[i].classList.add('correct');
+  if (q.answers[i].correct) {
     score++;
-  } else {
-    answers[i].classList.add('wrong');
-    const correctIndex = q.answers.findIndex(a => a.correct);
-    if (correctIndex !== -1) {
-      answers[correctIndex].classList.add('correct');
-    }
-
-    if (selected.explanation) {
-      setTimeout(() => {
-        alert("Λάθος: " + selected.explanation);
-      }, 200);
-    }
   }
 
   questionIndex++;
-  setTimeout(loadQuestion, 600);
+  loadQuestion();
 }
-
 function showFinal() {
   quizWrapper.style.display = "none";
   finalScreen.style.display = "block";
