@@ -70,7 +70,19 @@
 .answer-btn:hover {
   background: #0f56b5;
 }
+.correct {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
 
+.wrong {
+  background-color: #E53935 !important;
+  color: white !important;
+}
+
+.answer-btn {
+  transition: 0.3s;
+}
   </style>
 </head>
 <body>
@@ -547,23 +559,61 @@ function loadQuestion() {
     </div>
   `;
 }
-
 function checkAnswer(i) {
   const chapterQuestions = chapters[currentChapter];
   const q = chapterQuestions[questionIndex];
 
+  const answerButtons = document.querySelectorAll(".answer-btn");
+
+  // Κλειδώνουμε τα κουμπιά για να μην ξαναπατηθούν
+  answerButtons.forEach(btn => {
+    btn.disabled = true;
+  });
+
+  // Αν είναι σωστό → πράσινο
   if (q.answers[i].correct) {
+    answerButtons[i].classList.add("correct");
     score++;
+
+  } else {
+    // Αν είναι λάθος → κόκκινο
+    answerButtons[i].classList.add("wrong");
+
+    // Δείξε την σωστή απάντηση
+    const correctIndex = q.answers.findIndex(a => a.correct);
+    answerButtons[correctIndex].classList.add("correct");
+
+    // Δείξε επεξήγηση μετά από λίγο
+    if (q.answers[i].explanation) {
+      setTimeout(() => {
+        alert("Λάθος! " + q.answers[i].explanation);
+      }, 100);
+    }
   }
 
-  questionIndex++;
-  loadQuestion();
+  // Μετάβαση στην επόμενη ερώτηση μετά από 1 δευτερόλεπτο
+  setTimeout(() => {
+    questionIndex++;
+    loadQuestion();
+  }, 1200);
 }
-
 function showFinal() {
   quizWrapper.style.display = "none";
   finalScreen.style.display = "block";
   finalScore.textContent = `Τελικό Σκορ: ${score} / ${chapters[currentChapter].length}`;
+
+  finalScreen.innerHTML = `
+    <h2>Τελικό Σκορ</h2>
+    <p>${score} / ${chapters[currentChapter].length}</p>
+    <button onclick="restartQuiz()">Ξανά από την αρχή</button>
+  `;
+}
+
+function restartQuiz() {
+  questionIndex = 0;
+  score = 0;
+  finalScreen.style.display = "none";
+  document.getElementById("chapter-menu").style.display = "block";
 }
 </script>
 </body>
